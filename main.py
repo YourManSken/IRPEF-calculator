@@ -74,24 +74,37 @@ def print_tabella(somme, tributi):
     len_tab = 16    #Grandezza colonne di default in caratteri
 
     #Allarga le colonne
-    if (len_s := len(str(sum(somme)))) > len_tab:   #Se la lunghezza [len()] della stringa [str()] della somma [sum()]
+    if (len_s := len(str(sum(somme)))) > len_tab:   #Se il reddito é maggiore della dimensione delle colonne le allarga
         len_tab = len_s+2
     
-    for _ in range(4): riga+=('{:<'+str(len_tab)+'}')
+    for _ in range(4): riga+=('{:<'+str(len_tab)+'}') #Costruisce una riga della tabella con colonne di determinata lunghezza
 
-    print(riga.format('SCAGLIONI', 'SOMMA', 'ALIQUOTA', 'IMPOSTA'))
-    for _ in range(len_tab*4): print('─', end='')
-    print('')
-    for scaglione, somma, aliquota, imposta in zip(fasce_scelte, somme, aliquote_scelte, tributi):
+    print(riga.format('SCAGLIONI', 'SOMMA', 'ALIQUOTA', 'IMPOSTA')) #Printa titoli
+
+    #Separatore
+    for _ in range(len_tab*4): print('─', end='') #Fa una riga di separazione (──────────)
+    print('')   #Printa un newline (siccome la stringa é nulla e end='\n' scrive \n)
+
+    #Printa tabella
+    for scaglione, somma, aliquota, imposta in zip(fasce_scelte, somme, aliquote_scelte, tributi):  #Itera attraverso l'universo
         print(riga.format(scaglione, somma, aliquota, imposta))
+
+    #Separatore
     for _ in range(len_tab*4): print('─', end='')
     print('')
+
+    #Printa totali
     print(riga.format('TOTALE:', str(sum(somme)), str(sum(aliquote_scelte)), str(sum(tributi))))
 
+#Input vari
 def api():
-    anno = input('\nInserire 2020 o 2022 per utilizzare le aliquote dell\'anno corrispondente: ')
+    #INIT
     global fasce_scelte
     global aliquote_scelte
+
+    anno = input('\nInserire 2020 o 2022 per utilizzare le aliquote dell\'anno corrispondente: ')
+
+    #CHECK
     if anno == '2020':
         fasce_scelte = fasce_2020
         aliquote_scelte = aliquote_2020
@@ -100,11 +113,14 @@ def api():
         aliquote_scelte = aliquote_2022
     else:
         print(f'Input {anno} non é valido, inserire 2020 o 2022.')
-        api()
+        api()   #Recursion: la funzione si chiama da sola (quando metto un valore non valido, la funzione ricomincia)
 
+    #RUN
+    #Calcola l'irpef coi parametri dell'input
     calcola_irpef(input('Inserire reddito: '), fasce_scelte, aliquote_scelte, input("Restituire una tabella o solo l'imposta (y/n): "))
 
+    #Ripete lo script se 'y'
     if input("Calcolare l'imposta di un altro reddito? (y/n): ").lower() == 'y': api()
 
 #RUN
-api()
+api()   #Chiama la funzione api()
